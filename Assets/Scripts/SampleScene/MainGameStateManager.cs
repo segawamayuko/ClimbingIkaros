@@ -8,6 +8,18 @@ public class MainGameStateManager : MonoBehaviour
 
     public Timer Timer;
 
+    public Health PlayerHealth;
+
+    bool gameEnd = false;
+
+    //外部からのgameEndを取得するためのゲッター
+    public bool GetGameEnd
+    {
+        get { return gameEnd;}
+    }
+
+
+
     /// <summary>
     /// soundManagerが使われるタイミングでシーン上から探索する
     /// </summary>
@@ -21,11 +33,24 @@ public class MainGameStateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (gameEnd)
+        {
+            return;
+        }
+        if (PlayerHealth.IsDead){
+
+            //ResultCanvasのアクティブをオンにする
+            ResultCanvas.gameObject.SetActive(true);
+            gameEnd = true;
+
+        }
+
         // Timerの制限時間が0を下回ったとき
         if (Timer.GetGameTime < 0f)
         {
             // ResultCanvasのアクティブをオンにする
             ResultCanvas.gameObject.SetActive(true);
+            gameEnd = true;
         }
     }
 }

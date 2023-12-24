@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
@@ -10,6 +11,11 @@ public class SoundManager : MonoBehaviour
     /// 合計4つだが、1つ目はBGM、2~4個目はSEで音がかぶっても大丈夫なようにする
     /// </summary>
     private AudioSource[] audioSources = new AudioSource[4];
+
+    public AudioSource GetBGMAudioSource
+    {
+        get { return audioSources[0]; }
+    }
 
     public AudioClip BGMClip;
 
@@ -52,8 +58,29 @@ public class SoundManager : MonoBehaviour
             {
                 audioSources[i].clip = SEClip;
                 // for文を抜ける
+                audioSources[i].Play();
                 break;
             }
         }
     }
-}
+    /// <summary>
+    /// SEに使っているAudioSource達がプレイ中かどうか
+    /// </summary>
+    /// <returns></returns>
+    public bool IsSEAudioSourcesPlaying()
+    {
+        for (int i = 1; i < audioSources.Length; i++)
+        {
+            //SEのandioSourceがプレイ中だったら
+            if (audioSources[i].isPlaying)
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    
+} 
+
