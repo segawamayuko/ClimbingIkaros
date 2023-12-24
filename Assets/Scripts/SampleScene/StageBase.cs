@@ -20,6 +20,11 @@ public class StageBase : MonoBehaviour
     public StageTypes StageType = StageTypes.Normal;
 
     /// <summary>
+    /// SoundManagerの変数だが、このsoundManagerが使われるタイミングでシーン上から探索される
+    /// </summary>
+    private SoundManager soundManager => FindAnyObjectByType<SoundManager>();
+
+    /// <summary>
     /// 侵入判定
     /// </summary>
     /// <param name="collision"></param>
@@ -37,56 +42,50 @@ public class StageBase : MonoBehaviour
         }
     }
 
-
-
-
+    // OnCollisionEnter2Dのメソッドを書き換える
     public void OnCollisionEnter2DAction(GameObject player)
     {
         switch (StageType)
         {
-           case StageTypes.Invalide:
+            case StageTypes.Invalide:
                 break;
             case StageTypes.Normal:
-                Time.timeScale = 1F;
-
+                Time.timeScale = 1f;
                 break;
-            case StageTypes.Fall:
-                // Playerが当たったら落とす実装
-               
-                    if (this.gameObject.GetComponent<Rigidbody2D>() == null)
-                    {
-                        this.gameObject.AddComponent<Rigidbody2D>();
-                    }
-                
 
-               
-                    //this.gameObject.SetActive(false);
+            case StageTypes.Fall:
+
+                // Playerが当たったら落とす実装
+                if (this.gameObject.GetComponent<Rigidbody2D>() == null)
+                {
+                    this.gameObject.AddComponent<Rigidbody2D>();
+                }
+
+                this.gameObject.SetActive(false);
                 break;
 
             case StageTypes.TimeAcceleration:
-                
-                    if (Time.timeScale < 2)
-                    {
-                        // 時間の縮尺を変更する。
-                        Time.timeScale *= 1.2f;
-                        
-                    }
-               
+
+                if (Time.timeScale < 2)
+                {
+                    // 時間の縮尺を変更する。
+                    Time.timeScale *= 1.2f;
+                }
                 break;
 
             case StageTypes.Damage:
-                
-                
-                    // Healthコンポーネントをゲットしてきて
-                    var health = player.gameObject.
-                        GetComponent<Health>();
+                // Healthコンポーネントをゲットしてきて
+                var health = player.GetComponent<Health>();
+                if (health != null)
+                {
 
-                    if (health != null)
+                    if (soundManager != null)
                     {
-                        // HealthコンポーネントのTakeDamageを発動させる。
-                        health.TakeDamage(20f);
+                        soundManager.PlaySE();
                     }
-                
+                    // HealthコンポーネントのTakeDamageを発動させる。
+                    health.TakeDamage(20f);
+                }
                 break;
         }
         this.GetComponent<BoxCollider2D>().isTrigger = true;

@@ -15,10 +15,13 @@ public class PlayerMovement : MonoBehaviour
     /// 床を表すレイヤーマスク
     /// </summary>
     public LayerMask GroundLayer;
+
     /// <summary>
-    /// 地面に接触しているかどうか
+    /// 地面に接触している時に取得できる当たり判定
+    /// bool型のisGroundedを書き換えた
     /// </summary>
     private Collider2D isGroundedCollider;
+
     /// <summary>
     /// Rigidbody2Dコンポーネント
     /// </summary>
@@ -93,13 +96,12 @@ public class PlayerMovement : MonoBehaviour
 
         // 現在の位置に移動量を追加
         transform.Translate(new Vector3(moveX, 0, 0));
+
         // 地面に接触しているかを判定
         isGroundedCollider = Physics2D.OverlapCircle
-            (transform.position - new Vector3(0, 0.9f, 0)
+            (transform.position - new Vector3(0, 1f, 0)
             , 0.2f,
             GroundLayer);
-
-
     }
 
     private void FixedUpdate()
@@ -107,25 +109,22 @@ public class PlayerMovement : MonoBehaviour
         // 地面に接地しており、なおかつ下降中の場合
         if (isGroundedCollider != null && playerRigidBody.velocity.y < 0f)
         {
-            //当たったColliderのStageBaseを取得
-            var stagebase = isGroundedCollider.GetComponent<StageBase>();
-
-            //StageBaseが取得できれば
-            if (stagebase != null)
+            // 当たったColliderのStageBaseを取得
+            var stageBase = isGroundedCollider.GetComponent<StageBase>();
+            // StageBaseが取得できれば
+            if (stageBase != null)
             {
-                stagebase.OnCollisionEnter2DAction(this.gameObject);
-
+                stageBase.OnCollisionEnter2DAction(this.gameObject);
                 // PlayerのRigidbody2Dに上向きの力を加える
                 playerRigidBody.velocity =
                     new Vector2(playerRigidBody.velocity.x,
                     jumpForce);
-
                 // ジャンプする回数をカウントする
                 jumpCount++;
             }
+            // jumpPowerに加速度のyを与える
+            jumpPower = playerRigidBody.velocity.y;
         }
-        // jumpPowerに加速度のyを与える
-        jumpPower = playerRigidBody.velocity.y;
     }
 }
 

@@ -12,24 +12,22 @@ public class Health : MonoBehaviour
     /// <summary>
     /// 現在のHitPoint
     /// </summary>
+    [SerializeField]
     private float currentHealth;
+
     /// <summary>
     /// currentHealthをゲットするためのアクセサ
     /// </summary>
     public float GetCurrentHealth
     {
-        get {  return currentHealth;}
-
+        get { return currentHealth; }
     }
-
-
 
     /// <summary>
     /// 死亡判定
     /// </summary>
     public bool IsDead = false;
 
-    
     /// <summary>
     /// 最初に一回だけ処理されるメソッド
     /// </summary>
